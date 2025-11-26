@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Problem } from "@/data";
+import { PROBLEM_COLORS } from "@/theme/colors";
 import { Timer } from "@/components/Timer";
 
 interface EssayProblemProps {
@@ -50,7 +51,7 @@ export const EssayProblem: React.FC<EssayProblemProps> = ({
   
 
   return (
-    <div className="min-h-screen bg- flex flex-col">
+    <div className={`min-h-screen ${PROBLEM_COLORS.ESSAY.BACKGROUND} flex flex-col`}>
       {/* 顶部导航栏 */}
       <header className="bg-white shadow-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -76,7 +77,7 @@ export const EssayProblem: React.FC<EssayProblemProps> = ({
               <button
                 onClick={handleSubmit}
                 disabled={isSubmitting || submitted}
-                className="px-4 py-1.5 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200 flex items-center"
+                className={`px-4 py-1.5 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${PROBLEM_COLORS.ESSAY.BUTTON_PRIMARY} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200 flex items-center`}
               >
                 {isSubmitting ? (
                   <>
@@ -94,7 +95,7 @@ export const EssayProblem: React.FC<EssayProblemProps> = ({
 
       {/* 主内容区 */}
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+        <div className={`${PROBLEM_COLORS.ESSAY.EDITOR_BACKGROUND} rounded-xl shadow-sm p-6 border ${PROBLEM_COLORS.ESSAY.BORDER_COLOR}`}>
           <div className="prose max-w-none">
             <h2 className="text-xl font-semibold mb-4">题目描述</h2>
             <div className="text-gray-800 whitespace-pre-line mb-6">
@@ -135,8 +136,8 @@ export const EssayProblem: React.FC<EssayProblemProps> = ({
           </div>
         </div>
 
-        <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col">
-          <div className="px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+        <div className={`mt-6 ${PROBLEM_COLORS.ESSAY.EDITOR_BACKGROUND} rounded-xl shadow-sm border ${PROBLEM_COLORS.ESSAY.BORDER_COLOR} overflow-hidden flex flex-col`}>
+          <div className={`px-4 py-3 border-b ${PROBLEM_COLORS.ESSAY.BORDER_COLOR} flex justify-between items-center`}>
             <div className="flex items-center space-x-4">
               <span className="text-sm font-medium text-gray-700">答题区域</span>
               <div className="flex items-center text-xs text-gray-500">

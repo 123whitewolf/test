@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Problem } from "@/data";
+import { PROBLEM_COLORS } from "@/theme/colors";
 import { Timer } from "@/components/Timer";
 interface MultipleChoiceProblemProps {
   problem: Problem;
@@ -42,7 +43,7 @@ export const MultipleChoiceProblem: React.FC<MultipleChoiceProblemProps> = ({
 
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className={`min-h-screen ${PROBLEM_COLORS.MULTIPLE_CHOICE.BACKGROUND} flex flex-col`}>
       {/* 顶部导航栏 */}
       <header className="bg-white shadow-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -80,7 +81,7 @@ export const MultipleChoiceProblem: React.FC<MultipleChoiceProblemProps> = ({
 
       {/* 主内容区 */}
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+        <div className={`${PROBLEM_COLORS.MULTIPLE_CHOICE.OPTION_BACKGROUND} rounded-xl shadow-sm p-6 border border-gray-200`}>
           <div className="prose max-w-none">
             <h2 className="text-xl font-semibold mb-4">题目描述</h2>
             <div className="text-gray-800 whitespace-pre-line mb-6">
@@ -89,8 +90,8 @@ export const MultipleChoiceProblem: React.FC<MultipleChoiceProblemProps> = ({
           </div>
         </div>
 
-        <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-200">
+        <div className={`mt-6 ${PROBLEM_COLORS.MULTIPLE_CHOICE.OPTION_BACKGROUND} rounded-xl shadow-sm border border-gray-200 overflow-hidden`}>
+          <div className={`px-4 py-3 border-b ${PROBLEM_COLORS.MULTIPLE_CHOICE.OPTION_BORDER}`}>
             <h3 className="text-lg font-medium text-gray-700">选项</h3>
           </div>
 
@@ -106,10 +107,10 @@ export const MultipleChoiceProblem: React.FC<MultipleChoiceProblemProps> = ({
                         ? "border-green-500 bg-green-50"
                         : selectedAnswer === option
                         ? "border-red-500 bg-red-50"
-                        : "border-gray-200"
+                        : PROBLEM_COLORS.MULTIPLE_CHOICE.OPTION_BORDER
                       : selectedAnswer === option
-                      ? "border-blue-500 bg-blue-50"
-                      : "border-gray-200 hover:border-blue-300 hover:bg-blue-50"
+                      ? PROBLEM_COLORS.MULTIPLE_CHOICE.OPTION_SELECTED
+                      : `${PROBLEM_COLORS.MULTIPLE_CHOICE.OPTION_BORDER} hover:border-blue-300 ${PROBLEM_COLORS.MULTIPLE_CHOICE.OPTION_HOVER}`
                   }`}
                 >
                   <div className="flex items-center">

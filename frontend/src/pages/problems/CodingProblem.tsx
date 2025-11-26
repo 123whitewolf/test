@@ -2,10 +2,12 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { Problem } from "@/data";
+import { Problem} from "@/data";
+import { PROBLEM_COLORS } from "@/theme/colors";
 import { Timer } from "@/components/Timer";
 import { marked } from "marked";
 import Radio from "@/components/setting_show";
+import SmoothDropdown from "@/components/SmoothDropdown";
 import Editor from "@monaco-editor/react";
 import { configureMonacoLanguages } from "@/config/monacoConfig";
 import { executeWithPiston } from "@/config/compilerConfig";
@@ -36,6 +38,7 @@ export const CodingProblem: React.FC<CodingProblemProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [output, setOutput] = useState<string>("");
   const [isRunning, setIsRunning] = useState(false);
+  const [fullscreenSection, setFullscreenSection] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   
@@ -221,6 +224,11 @@ export const CodingProblem: React.FC<CodingProblemProps> = ({
     }
   };
 
+  // 全屏切换函数
+  const toggleFullscreen = (section: string) => {
+    setFullscreenSection(fullscreenSection === section ? null : section);
+  };
+
   // 初始化 Monaco 配置（仅执行一次）
   useEffect(() => {
     configureMonacoLanguages();
@@ -245,9 +253,9 @@ export const CodingProblem: React.FC<CodingProblemProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className={`min-h-screen ${PROBLEM_COLORS.CODING.DESCRIPTION_BACKGROUND} flex flex-col`}>
       {/* 顶部导航栏 */}
-      <header className="sticky top-0 z-50 border-b-2 border-gray-300 bg-white">
+      <header className={`sticky top-0 z-50 ${PROBLEM_COLORS.CODING.HEADER_BORDER} ${PROBLEM_COLORS.CODING.HEADER_BACKGROUND}`}>
         <div className="max-w-full px-4 lg:px-8 py-3">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-6">
@@ -257,14 +265,14 @@ export const CodingProblem: React.FC<CodingProblemProps> = ({
               >
                 Xutcode
               </button>
-              <div className="border-l-2 border-gray-300 pl-4">
+              <div className={`border-l-2 ${PROBLEM_COLORS.CODING.BORDER_COLOR} pl-4`}>
                 <h1 className="text-base font-medium text-gray-900">{problem.title}</h1>
                 <div className="flex items-center mt-1 space-x-2">
                   <span className={cn(
                     "px-2.5 py-0.5 text-xs font-medium rounded-full",
-                    problem.difficulty === "easy" ? "bg-green-100 text-green-800" :
-                    problem.difficulty === "medium" ? "bg-yellow-100 text-yellow-800" :
-                    "bg-red-100 text-red-800"
+                    problem.difficulty === "easy" ? PROBLEM_COLORS.CODING.DIFFICULTY_EASY :
+                    problem.difficulty === "medium" ? PROBLEM_COLORS.CODING.DIFFICULTY_MEDIUM :
+                    PROBLEM_COLORS.CODING.DIFFICULTY_HARD
                   )}>
                     {problem.difficulty === "easy" ? "Easy" : problem.difficulty === "medium" ? "Medium" : "Hard"}
                   </span>
@@ -277,23 +285,23 @@ export const CodingProblem: React.FC<CodingProblemProps> = ({
               <button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="px-6 py-2 rounded-lg text-white bg-green-600 hover:bg-green-700 font-medium transition disabled:opacity-50 border border-green-700"
+                className={`px-6 py-2 rounded-lg text-white ${PROBLEM_COLORS.CODING.SUBMIT_BUTTON} font-medium transition ${PROBLEM_COLORS.CODING.SUBMIT_BUTTON_BORDER}`}
               >
                 {isSubmitting ? "提交中..." : "提交"}
               </button>
 
               <div className="relative group">
-                <button className="w-8 h-8 rounded-full overflow-hidden border-2 border-gray-300 hover:border-gray-400 transition">
+                <button className={`w-8 h-8 rounded-full overflow-hidden ${PROBLEM_COLORS.CODING.AVATAR_BORDER} transition`}>
                   {userProfile?.avatar ? (
                     <img src={userProfile.avatar} alt="Avatar" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-sm">
+                    <div className={`w-full h-full bg-gradient-to-br ${PROBLEM_COLORS.CODING.AVATAR_DEFAULT_BACKGROUND} flex items-center justify-center text-white text-sm`}>
                       <i className="fa-solid fa-user"></i>
                     </div>
                   )}
                 </button>
                 
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border-2 border-gray-300 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                <div className={`absolute right-0 mt-2 w-48 ${PROBLEM_COLORS.CODING.DESCRIPTION_BACKGROUND} rounded-lg shadow-lg border-2 ${PROBLEM_COLORS.CODING.BORDER_COLOR} opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50`}>
                   <Radio onLogout={handleLogout} />
                 </div>
               </div>
@@ -305,10 +313,30 @@ export const CodingProblem: React.FC<CodingProblemProps> = ({
       {/* 主内容区 */}
       <main className="flex-grow flex overflow-hidden" ref={containerRef}>
         {/* 左侧：题目描述面板 */}
-        <div className="overflow-y-auto border-r-2 border-gray-300" style={{ width: `${leftWidth}%` }}>
+        <div className={cn(
+          "overflow-y-auto border-r-2 border-gray-300 relative",
+          fullscreenSection === "description" ? "fixed top-16 left-0 right-0 bottom-0 z-40" : "",
+          fullscreenSection && fullscreenSection !== "description" ? "hidden" : ""
+        )} style={{ width: fullscreenSection === "description" ? "100%" : `${leftWidth}%` }}>
+          {fullscreenSection === "description" && (
+            <button
+              onClick={() => toggleFullscreen("description")}
+              className="absolute top-4 right-4 z-10 p-2 bg-white rounded-full transition-colors"
+            >
+              <i className="fas fa-compress text-gray-600"></i>
+            </button>
+          )}
+          {!fullscreenSection && (
+            <button
+              onClick={() => toggleFullscreen("description")}
+              className="absolute top-4 right-4 z-10 p-2 bg-white rounded-full transition-colors"
+            >
+              <i className="fas fa-expand text-gray-600"></i>
+            </button>
+          )}
           <div className="p-6 lg:p-8">
             {/* 标签导航 */}
-            <div className="flex space-x-6 border-b-2 border-gray-300 mb-6 pb-3">
+            <div className={`flex space-x-6 border-b-2 ${PROBLEM_COLORS.CODING.TAB_NAV_BORDER} mb-6 pb-3`}>
               {['Description', 'Solutions', 'Submissions'].map((tab) => (
                 <button
                   key={tab}
@@ -316,8 +344,8 @@ export const CodingProblem: React.FC<CodingProblemProps> = ({
                   className={cn(
                     "font-medium text-sm transition pb-2 border-b-2",
                     activeTab === tab.toLowerCase()
-                      ? "border-orange-500 text-gray-900"
-                      : "border-transparent text-gray-500 hover:text-gray-700"
+                      ? `${PROBLEM_COLORS.CODING.TAB_ACTIVE_BORDER} ${PROBLEM_COLORS.CODING.TAB_ACTIVE_TEXT}`
+                      : `border-transparent ${PROBLEM_COLORS.CODING.TAB_INACTIVE_TEXT} hover:${PROBLEM_COLORS.CODING.TAB_HOVER_TEXT}`
                   )}
                 >
                   {tab}
@@ -378,25 +406,41 @@ export const CodingProblem: React.FC<CodingProblemProps> = ({
         {/* 分割线 */}
         <div
           onMouseDown={() => setIsDragging(true)}
-          className="w-1 bg-gray-300 hover:bg-orange-500 cursor-col-resize transition-colors"
+          className={`w-1 ${PROBLEM_COLORS.CODING.BORDER_COLOR} hover:bg-orange-500 cursor-col-resize transition-colors`}
           style={{ userSelect: 'none' }}
         />
 
         {/* 右侧：代码编辑器面板 */}
-        <div className="flex flex-col bg-gray-50 border-l-2 border-gray-300" style={{ width: `${100 - leftWidth}%` }}>
+        <div className={cn(
+          `flex flex-col ${PROBLEM_COLORS.CODING.EDITOR_BACKGROUND} border-l-2 ${PROBLEM_COLORS.CODING.BORDER_COLOR} relative`,
+          fullscreenSection === "editor" ? "fixed top-16 left-0 right-0 bottom-0 z-40" : "",
+          fullscreenSection && fullscreenSection !== "editor" ? "hidden" : ""
+        )} style={{ width: fullscreenSection === "editor" ? "100%" : `${100 - leftWidth}%` }}>
+          {fullscreenSection === "editor" && (
+            <button
+              onClick={() => toggleFullscreen("editor")}
+              className="absolute top-4 right-4 z-10 p-2 bg-white rounded-full transition-colors"
+            >
+              <i className="fas fa-compress text-gray-600"></i>
+            </button>
+          )}
+          {!fullscreenSection && (
+            <button
+              onClick={() => toggleFullscreen("editor")}
+              className="absolute top-4 right-4 z-10 p-2 bg-white rounded-full transition-colors"
+            >
+              <i className="fas fa-expand text-gray-600"></i>
+            </button>
+          )}
           {/* 编辑器工具栏 */}
           <div className="border-b-2 border-gray-300 bg-white px-4 lg:px-6 py-3 flex justify-between items-center">
             <div className="flex items-center space-x-3">
-              <select
+              <SmoothDropdown
+                options={["javascript", "python", "java", "cpp"]}
                 value={language}
-                onChange={(e) => handleLanguageChange(e.target.value)}
-                className="px-3 py-1.5 border-2 border-gray-300 rounded text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-500"
-              >
-                <option value="javascript">JavaScript</option>
-                <option value="python">Python</option>
-                <option value="java">Java</option>
-                <option value="cpp">C++</option>
-              </select>
+                onChange={handleLanguageChange}
+                className="w-32"
+              />
             </div>
 
             <div className="flex items-center space-x-2">
@@ -419,7 +463,7 @@ export const CodingProblem: React.FC<CodingProblemProps> = ({
               </button>
               <button
                 onClick={() => setCode('')}
-                className="p-1.5 text-gray-600 hover:bg-gray-200 rounded transition border-2 border-gray-300"
+                className="p-1.5 text-gray-600 hover:bg-gray-200 rounded transition  "
                 title="清空"
               >
                 <i className="fa-solid fa-trash text-sm"></i>
@@ -428,7 +472,7 @@ export const CodingProblem: React.FC<CodingProblemProps> = ({
           </div>
 
           {/* 代码编辑器 */}
-          <div className="flex-grow overflow-hidden border-b-2 border-gray-300">
+          <div className={`flex-grow overflow-hidden border-b-2 ${PROBLEM_COLORS.CODING.DIVIDER_COLOR}`}>
             <Editor
               value={code}
               onChange={(value) => setCode(value || '')}
@@ -440,9 +484,9 @@ export const CodingProblem: React.FC<CodingProblemProps> = ({
           </div>
 
           {/* 输出面板 */}
-          <div className="flex flex-col bg-white border-t-2 border-gray-300 max-h-48">
+          <div>
             {/* 输出标签 */}
-            <div className="px-4 lg:px-6 py-2 bg-gray-50 border-b-2 border-gray-300 font-semibold text-sm text-gray-900 flex justify-between items-center">
+            <div className={`px-4 lg:px-6 py-2 ${PROBLEM_COLORS.CODING.OUTPUT_PANEL_BACKGROUND} border-b-2 ${PROBLEM_COLORS.CODING.BORDER_COLOR} font-semibold text-sm text-gray-900 flex justify-between items-center`}>
               <span>输出结果</span>
               {output && (
                 <button
@@ -455,7 +499,7 @@ export const CodingProblem: React.FC<CodingProblemProps> = ({
             </div>
 
             {/* 输出内容 */}
-            <div className="flex-grow p-4 font-mono text-sm overflow-auto bg-gray-900 text-gray-100">
+            <div className={`flex-grow p-4 font-mono text-sm overflow-auto ${PROBLEM_COLORS.CODING.OUTPUT_CONTENT_BACKGROUND} ${PROBLEM_COLORS.CODING.OUTPUT_TEXT_COLOR}`}>
               {output ? (
                 <pre className="whitespace-pre-wrap break-words">{output}</pre>
               ) : (

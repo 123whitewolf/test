@@ -51,9 +51,3 @@ export const STORAGE_KEYS = {
   SETTINGS: "settings",
 };
 
-// 分页设置
-export const PAGINATION = {
-  PROBLEMS_PER_PAGE: 6,
-  BOOKMARKS_PER_PAGE: 10,
-};
-
