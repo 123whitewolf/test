@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Problem } from "@/lib/api";
+import { Problem } from "@/data";
 import { Timer } from "@/components/Timer";
 interface MultipleChoiceProblemProps {
   problem: Problem;

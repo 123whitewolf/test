@@ -7,56 +7,16 @@ import AIGeneratePanel from "@/pages/AIGeneratePanel";
 import BookmarkPanel from "@/pages/BookmarkPanel";
 import { useContext } from "react";
 import { AuthContext } from "@/contexts/authContext";
-import { api, Problem } from "@/lib/api";
+import { api } from "@/lib/api";
+import { Problem, CATEGORIES, getProblemTypeIcon, getProblemTypeName } from "@/data";
+//- 引入自定义组件
 import SmoothDropdown from "@/components/SmoothDropdown";
 import Input  from "@/components/input";
 import Checkbox2 from "@/components/CusomCheckbox2";
 import AvatarButton from "@/components/setting";
 import SettingMenu from "@/components/setting_show";
 import BookmarkCheckbox from "@/components/CusomCheckbox3";
-const getProblemTypeIcon = (template: string) => {
-  switch (template) {
-    case "multiple-choice":
-      return "fa-circle-check";
-    case "coding":
-      return "fa-code";
-    case "essay":
-      return "fa-pen-to-square";
-    case "fill-blank":
-      return "fa-square-pen";
-    default:
-      return "fa-question";
-  }
-};
 
-// 获取题目类型名称
-const getProblemTypeName = (template: string) => {
-  switch (template) {
-    case "multiple-choice":
-      return "选择题";
-    case "coding":
-      return "编程题";
-    case "essay":
-      return "解答题";
-    case "fill-blank":
-      return "填空题";
-    default:
-      return "未知类型";
-  }
-};
-
-// 题目分类
-const CATEGORIES = [
-  "全部",
-  "计算机组成原理",
-  "数据结构",
-  "计算机网络",
-  "操作系统",
-  "Java",
-  "Python",
-  "C语言",
-  "算法分析",
-];
 
 export default function ProblemSelectionPage() {
   const [problems, setProblems] = useState<Problem[]>([]);
@@ -91,9 +51,11 @@ export default function ProblemSelectionPage() {
     return "https://picsum.photos/seed/defaultuser/100/100.jpg";
   };
   
+
+  
   const userAvatar = getUserAvatar();
 
-  // 处理AI生成的题目
+//! 处理AI生成的题目
   const handleGeneratedProblems = (problems: any[]) => {
     // 将生成的题目添加到问题列表中
     const newProblems = problems.map((problem) => ({
@@ -116,14 +78,14 @@ export default function ProblemSelectionPage() {
   const navigate = useNavigate();
   const { logout } = useContext(AuthContext); // 使用 AuthContext 中的 logout 函数
 
-  // 当导航栏关闭时，自动关闭设置菜单
+  //! 当导航栏关闭时，自动关闭设置菜单
   useEffect(() => {
     if (sidebarCollapsed) {
       setShowSettingsMenu(false);
     }
   }, [sidebarCollapsed]);
 
-  // 全局点击检测，当点击页面上任何一点时关闭用户菜单
+  //! 全局点击检测，当点击页面上任何一点时关闭用户菜单
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       // 检查点击是否在用户菜单内部
@@ -147,14 +109,14 @@ export default function ProblemSelectionPage() {
     };
   }, [showSettingsMenu]);
 
-  // 退出登录函数
+  //! 退出登录函数
   const handleLogout = () => {
     localStorage.removeItem("userProblems"); // 清除题目数据
     logout(); // 调用 AuthContext 中的 logout 函数
     setShowSettingsMenu(false); // 关闭用户菜单
   };
 
-  // 切换设置菜单显示状态
+  //! 切换设置菜单显示状态
   const toggleSettingsMenu = () => {
     setShowSettingsMenu(!showSettingsMenu);
   };

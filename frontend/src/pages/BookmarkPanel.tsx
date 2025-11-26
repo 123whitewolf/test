@@ -2,43 +2,11 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { api, Problem } from "../lib/api";
+import { api } from "../lib/api";
+import { Problem, CATEGORIES, getProblemTypeIcon, getProblemTypeName } from "@/data";
 import SmoothDropdown from "../components/SmoothDropdown";
 import Checkbox2 from "@/components/CusomCheckbox2";
 import Input from "@/components/input";
-
-
-// 获取题目类型图标
-const getProblemTypeIcon = (template: string) => {
-  switch (template) {
-    case "multiple-choice":
-      return "fa-circle-check";
-    case "coding":
-      return "fa-code";
-    case "essay":
-      return "fa-pen-to-square";
-    case "fill-blank":
-      return "fa-square-pen";
-    default:
-      return "fa-question";
-  }
-};
-
-// 获取题目类型名称
-const getProblemTypeName = (template: string) => {
-  switch (template) {
-    case "multiple-choice":
-      return "选择题";
-    case "coding":
-      return "编程题";
-    case "essay":
-      return "解答题";
-    case "fill-blank":
-      return "填空题";
-    default:
-      return "未知类型";
-  }
-};
 
 export default function BookmarkPanel() {
   const navigate = useNavigate();
@@ -50,19 +18,6 @@ export default function BookmarkPanel() {
   const [showCompleted, setShowCompleted] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const problemsPerPage = 6;
-
-  // 题目分类
-  const CATEGORIES = [
-    "全部",
-    "计算机组成原理",
-    "数据结构",
-    "计算机网络",
-    "操作系统",
-    "Java",
-    "Python",
-    "C语言",
-    "算法分析",
-  ];
 
   // 初始化收藏题目数据
   useEffect(() => {

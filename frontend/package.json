@@ -11,11 +11,14 @@
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
+    "ace-builds": "^1.43.4",
     "clsx": "^2.1.1",
     "framer-motion": "^12.9.2",
     "react": "^18.3.1",
+    "react-ace": "^14.0.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.3.0",
+    "react-syntax-highlighter": "^16.1.0",
     "react-tooltip": "^5.29.1",
     "recharts": "^2.15.1",
     "sonner": "^2.0.2",
@@ -27,6 +30,7 @@
   "devDependencies": {
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
+    "@types/react-syntax-highlighter": "^15.5.13",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.21",
     "husky": "^9.1.7",

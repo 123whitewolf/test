@@ -6,6 +6,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend
 } from 'recharts';
+import { UserProfile } from '@/data';
 
 // Type definitions
 interface LearningStats {
@@ -32,27 +33,23 @@ interface BookmarkedProblem extends Omit<WrongProblem, 'mistakeCount'> {
   addedDate: string;
 }
 
-interface UserProfile {
-  name: string;
-  email: string;
-  avatar: string;
-  joinDate: string;
-  bio: string;
-  preferences: {
-    darkMode: boolean;
-    emailNotifications: boolean;
-    dailyReminders: boolean;
-  };
-}
-
 // Mock data
 const MOCK_USER_PROFILE: UserProfile = {
-  name: '张明',
-  email: 'zhangming@example.com',
-  avatar: 'https://space.coze.cn/api/coze_space/gen_image?image_size=square&prompt=user%20avatar%20male&sign=ebabea4c1f7e5ee731c308221c34a2fe',
-  joinDate: '2023-09-15',
+  id: 1,
+  userId: 1,
+  firstName: '明',
+  lastName: '张',
   bio: '计算机科学专业大三学生，热爱编程和算法挑战。',
-  preferences: { darkMode: false, emailNotifications: true, dailyReminders: true }
+  avatar: 'https://space.coze.cn/api/coze_space/gen_image?image_size=square&prompt=user%20avatar%20male&sign=ebabea4c1f7e5ee731c308221c34a2fe',
+  learningGoals: ['掌握数据结构与算法', '提高编程能力', '准备面试'],
+  skills: ['JavaScript', 'React', 'Node.js', 'Python'],
+  completedProblems: 48,
+  totalProblems: 126,
+  successRate: 78.5,
+  studyTime: 240,
+  lastActive: '2023-11-22',
+  createdAt: '2023-09-15',
+  updatedAt: '2023-11-22'
 };
 
 const MOCK_LEARNING_STATS: LearningStats = {
@@ -344,8 +341,8 @@ export default function ProfilePanel() {
     toast.success('已登出');
     setShowLogoutConfirm(false);
     
-    // TODO: 后续跳转到登录页面
-    // navigate('/login');
+    // 跳转到主页面
+    navigate('/');
   };
 
   // 重置用户数据
@@ -423,7 +420,7 @@ export default function ProfilePanel() {
                       <div className="relative group mb-4">
                         <img 
                           src={userProfile.avatar} 
-                          alt={userProfile.name} 
+                          alt={`${userProfile.firstName}${userProfile.lastName}`} 
                           className="w-44 h-44 rounded-full border-4 border-white object-cover shadow-lg group-hover:shadow-xl transition-shadow"
                         />
                         <div className="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-400/0 via-purple-400/0 to-pink-400/20 group-hover:to-pink-400/40 transition-all"></div>
@@ -453,8 +450,8 @@ export default function ProfilePanel() {
                         aria-label="上传头像"
                       />
 
-                      <h1 className="text-2xl font-bold text-slate-900 text-center mb-1">{userProfile.name}</h1>
-                      <p className="text-slate-500 text-sm text-center mb-3">{userProfile.email}</p>
+                      <h1 className="text-2xl font-bold text-slate-900 text-center mb-1">{userProfile.firstName}{userProfile.lastName}</h1>
+                      <p className="text-slate-500 text-sm text-center mb-3">用户ID: {userProfile.userId}</p>
                     </div>
 
                     {/* 个人简介 */}
@@ -463,7 +460,7 @@ export default function ProfilePanel() {
                     {/* 加入时间 */}
                     <div className="text-center text-xs text-slate-600 mb-4 pb-4 border-b border-slate-200/50">
                       <i className="fa-solid fa-calendar mr-1.5 text-indigo-500"></i>
-                      加入于 {userProfile.joinDate}
+                      加入于 {userProfile.createdAt}
                     </div>
 
                     {/* 统计数据 - 三列 */}
@@ -806,14 +803,25 @@ export default function ProfilePanel() {
               </button>
             </div>
             <form className="p-6 space-y-5">
-              <div>
-                <label className="block text-sm font-semibold text-slate-900 mb-2">用户名</label>
-                <input 
-                  type="text" 
-                  value={editedProfile.name}
-                  onChange={(e) => setEditedProfile({...editedProfile, name: e.target.value})}
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
-                />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-900 mb-2">姓</label>
+                  <input 
+                    type="text" 
+                    value={editedProfile.firstName}
+                    onChange={(e) => setEditedProfile({...editedProfile, firstName: e.target.value})}
+                    className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-900 mb-2">名</label>
+                  <input 
+                    type="text" 
+                    value={editedProfile.lastName}
+                    onChange={(e) => setEditedProfile({...editedProfile, lastName: e.target.value})}
+                    className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                  />
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-slate-900 mb-2">个人简介</label>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Problem, api } from "@/lib/api";
+import { api } from "@/lib/api";
+import { Problem } from "@/data";
 import { MultipleChoiceProblem } from "./MultipleChoiceProblem";
 import { CodingProblem } from "./CodingProblem";
 import { EssayProblem } from "./EssayProblem";

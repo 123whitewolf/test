@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import Home from "@/pages/Home";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage2";
@@ -17,6 +17,8 @@ export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   //这个状态量用于确定是否正在加载页面?
   const [loading, setLoading] = useState(true);
+  // 导航钩子
+  const navigate = useNavigate();
 
   //# 退出函数
   const logout = () => {
@@ -26,6 +28,8 @@ export default function App() {
     sessionStorage.removeItem("user");
     //用于显示退出失败的提示
     toast.success("已成功退出登录");
+    // 导航到主页面
+    navigate("/");
   };
 
   // 检查用户是否已登录

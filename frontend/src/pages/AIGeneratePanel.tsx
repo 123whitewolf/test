@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { CATEGORIES,  Problem } from '@/data';
 
 // AI 生成题目选项类型
 interface GenerationOptions {
@@ -10,11 +11,6 @@ interface GenerationOptions {
   questionCount: number;
 }
 
-// 题目分类
-const CATEGORIES = [
-  '数据结构', '计算机网络', '操作系统', 'Java', 'Python', 'C语言', '算法分析'
-];
-
 // 知识点标签
 const ALL_TAGS = [
   '数组', '哈希表', '双指针', '字符串', '栈', '递归', '链表',
@@ -22,12 +18,12 @@ const ALL_TAGS = [
 ];
 
 interface AIGeneratePanelProps {
-  onProblemsGenerated: (problems: any[]) => void;
+  onProblemsGenerated: (problems: Problem[]) => void;
 }
 
 export default function AIGeneratePanel({ onProblemsGenerated }: AIGeneratePanelProps) {
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedProblems, setGeneratedProblems] = useState<any[]>([]);
+  const [generatedProblems, setGeneratedProblems] = useState<Problem[]>([]);
   const [options, setOptions] = useState<GenerationOptions>({
     difficulty: 'medium',
     category: '数据结构',
@@ -57,17 +53,20 @@ export default function AIGeneratePanel({ onProblemsGenerated }: AIGeneratePanel
         difficulty: options.difficulty,
         category: options.category,
         tags: options.tags.length > 0 ? options.tags : [ALL_TAGS[Math.floor(Math.random() * ALL_TAGS.length)]],
-        description: `这是一道由AI生成的${options.difficulty === 'easy' ? '简单' : options.difficulty === 'medium' ? '中等' : '困难'}难度${options.category}题目。\n\n请解决以下问题：\n\n实现一个函数，该函数能够处理${options.tags.length > 0 ? options.tags.join('、') : '指定'}相关的任务，要求时间复杂度不超过O(n log n)。`,
-        examples: [
+        completed: false,
+        bookmarked: false,
+        通过率: 0,
+        template: "coding" as const,
+        content: `这是一道由AI生成的${options.difficulty === 'easy' ? '简单' : options.difficulty === 'medium' ? '中等' : '困难'}难度${options.category}题目。\n\n请解决以下问题：\n\n实现一个函数，该函数能够处理${options.tags.length > 0 ? options.tags.join('、') : '指定'}相关的任务，要求时间复杂度不超过O(n log n)。`,
+        sampleCode: `function solution(input) {
+  // 在这里实现你的解决方案
+  return output;
+}`,
+        testCases: [
           {
             input: "示例输入",
-            output: "示例输出",
-            explanation: "示例解释"
+            output: "示例输出"
           }
-        ],
-        constraints: [
-          "1 <= n <= 10^5",
-          "0 <= nums[i] <= 10^9"
         ]
       }));
 
@@ -239,7 +238,7 @@ export default function AIGeneratePanel({ onProblemsGenerated }: AIGeneratePanel
                     ))}
                   </div>
 
-                  <p className="text-sm text-gray-700 line-clamp-3 mb-4">{problem.description}</p>
+                  <p className="text-sm text-gray-700 line-clamp-3 mb-4">{problem.content}</p>
 
                   <div className="flex justify-end">
                     <button
