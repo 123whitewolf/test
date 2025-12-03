@@ -99,8 +99,6 @@ router.patch('/:id', async (req, res) => {
     if (password) {
       // 直接使用明文密码存储（仅用于开发阶段）
 
-
-      
       await db.execute(
         'UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?',
         [password, userId]

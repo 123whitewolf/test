@@ -47,7 +47,7 @@ router.post('/send-email-verification', async (req, res) => {
     const code = generateVerificationCode();
     
     // 存储验证码
-    verificationCodeStore.setCode(email, code);
+    await verificationCodeStore.setCode(email, code);
     
     // 创建邮件传输器
     const transporter = createQQEmailTransporter();
@@ -92,7 +92,7 @@ router.post('/verify-email', async (req, res) => {
       return res.status(400).json({ message: '邮箱和验证码不能为空' });
     }
 
-    const isValid = verificationCodeStore.verifyCode(email, code);
+    const isValid = await verificationCodeStore.verifyCode(email, code);
     
     if (isValid) {
       res.json({ success: true, message: '验证成功' });
@@ -203,7 +203,7 @@ router.post('/send-password-reset-code', async (req, res) => {
     const code = generateVerificationCode();
 
     // 存储验证码
-    verificationCodeStore.setCode(email, code);
+    await verificationCodeStore.setCode(email, code);
 
     // 创建邮件传输器
     const transporter = createQQEmailTransporter();

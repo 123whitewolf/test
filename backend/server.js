@@ -2,6 +2,9 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
+// 导入Redis客户端以确保连接
+const redisClient = require('./utils/redisClient');
+
 // 导入路由
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
@@ -29,8 +32,26 @@ app.get('/', (req, res) => {
   res.json({ message: '欢迎使用教育网站后端API' });
 });
 
-// 启动服务器
+// 启动服务器 - 等待Redis连接成功后再启动
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`服务器运行在端口 ${PORT}`);
-});
+
+async function startServer() {
+  try {
+    // 确保Redis客户端已连接
+    if (!redisClient.isOpen) {
+      await redisClient.connect();
+    }
+    console.log('Redis连接成功');
+    
+    // 启动HTTP服务器
+    app.listen(PORT, () => {
+      console.log(`服务器运行在端口 ${PORT}`);
+    });
+  } catch (error) {
+    console.error('启动服务器失败:', error);
+    process.exit(1);
+  }
+}
+
+// 调用启动函数
+startServer();
